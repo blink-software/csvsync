@@ -1,0 +1,29 @@
+{
+  "name": "csvsync",
+  "version": "1.0.0",
+  "description": "csv reader and writer working synchronously",
+  "main": "csvsync.js",
+  "scripts": {
+    "test": "./node_modules/.bin/tape test.js | ./node_modules/.bin/tap-spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soquel/csvsync.git"
+  },
+  "keywords": [
+    "csv"
+  ],
+  "author": "Mateusz Misiorny <matt@flow2code.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/soquel/csvsync/issues"
+  },
+  "homepage": "https://github.com/soquel/csvsync#readme",
+  "dependencies": {
+    "lodash": "^3.10.1"
+  },
+  "devDependencies": {
+    "tap-spec": "^4.1.1",
+    "tape": "^4.4.0"
+  }
+}

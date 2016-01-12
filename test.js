@@ -1,0 +1,230 @@
+var test = require('tape');
+
+var _ = require('lodash');
+var csvsync = require('.');
+
+
+test('csv reading and writing', function(t) {
+	var tests =
+	[
+		{
+			'name': 'simple',
+			'csv': 'foo,bar\n2,3\n4,5\n',
+			'js': [['foo', 'bar'], ['2', '3'], ['4', '5']],
+		},
+		{
+			'name': 'quotes in field',
+			'csv': '"Active ""Sum""",bar\n3,2\n4,5\n',
+			'js': [['Active "Sum"', 'bar'], ['3', '2'], ['4', '5']],
+		},
+		{
+			'name': 'quotes in field at end of line',
+			'csv': '"Active ""Sum""",bar\n3,2\n4,"some ""test"""\n',
+			'js': [['Active "Sum"', 'bar'], ['3', '2'], ['4', 'some "test"']],
+		},
+		{
+			'name': 'whole field in quotes',
+			'csv': '"""sum""",bar\n3,2\nmore,"""test"""\n',
+			'js': [['"sum"', 'bar'], ['3', '2'], ['more', '"test"']],
+		},
+		{
+			'name': 'field starting with quote and other data',
+			'csv': '"""sum""",bar\n3,2\n"""test"" a",more\n',
+			'js': [['"sum"', 'bar'], ['3', '2'], ['"test" a', 'more']],
+		},
+		{
+			'name': 'field starting with quote',
+			'csv': '"""sum""",bar\n3,2\n"""test"" a",more\n',
+			'js': [['"sum"', 'bar'], ['3', '2'], ['"test" a', 'more']],
+		},
+		{
+			'name': 'comma in field',
+			'csv': 'sum,bar\n"12,76",2\n4,5\n',
+			'js': [['sum', 'bar'], ['12,76', '2'], ['4', '5']],
+		},
+	];
+
+	_.each(tests, function(test) {
+		// test stringify
+		t.deepEqual(csvsync.stringify(test.js), test.csv, test.name + ' (stringify)');
+
+		// test parse
+		t.deepEqual(csvsync.parse(test.csv), test.js, test.name + ' (parse)');
+	});
+
+
+	t.end();
+});
+
+
+test('line endings', function(t) {
+	var tests =
+	[
+		{
+			'name': 'windows line-endings',
+			'csv': 'foo,bar\r\n2,3\r\n4,5\r\n',
+			'js': [['foo', 'bar'], ['2', '3'], ['4', '5']],
+		},
+		{
+			'name': 'mac line-endings',
+			'csv': 'foo,bar\r2,3\r4,5\r',
+			'js': [['foo', 'bar'], ['2', '3'], ['4', '5']],
+		},
+		{
+			'name': 'mixed line-endings',
+			'csv': 'foo,bar\r\n2,3\r4,5\n',
+			'js': [['foo', 'bar'], ['2', '3'], ['4', '5']],
+		},
+	];
+
+	_.each(tests, function(test) {
+		t.deepEqual(csvsync.parse(test.csv), test.js, test.name);
+	});
+
+
+	t.end();
+});
+
+
+test('using options', function(t) {
+	var range = _.map(_.range(1000), function(v) { return [v.toString()]; });
+
+	var tests =
+	[
+		{
+			'name': 'skip header',
+			'csv': 'foo,bar\n2,3\n4,5\n',
+			'js': [['2', '3'], ['4', '5']],
+			'options': {'skipHeader': true},
+		},
+		{
+			'name': 'empty fields',
+			'csv': 'foo,bar\n22,333\n,55555,,7777',
+			'js': [['22', '333'], ['', '55555', '', '7777']],
+			'options': {'skipHeader': true},
+		},
+		{
+			'name': 'empty lines',
+			'csv': 'foo,bar\n\n22,333\n\n,55555,,7777',
+			'js': [[''], ['22', '333'], [''], ['', '55555', '', '7777']],
+			'options': {'skipHeader': true},
+		},
+		{
+			'name': 'simple',
+			'csv': 'foo,bar\n2,3\n4,5',
+			'js': [{foo: '2', bar: '3'}, {foo: '4', bar: '5'}],
+			'options': {'returnObject': true},
+		},
+		{
+			'name': 'handle extra columns not defined in header',
+			'csv': 'foo,bar,baz\n2,3\n4\n,a,bb,ccc',
+			'js': [{bar: '3', foo: '2'}, {foo: '4'}, {bar: 'a', baz: 'bb', foo: ''}],
+			'options': {'returnObject': true},
+		},
+		{
+			'name': 'handle empty lines',
+			'csv': 'foo,bar,baz\n2,3\n\n4\n,a,bb,ccc',
+			'js': [
+				{bar: '3', foo: '2'},
+				{foo: ''},
+				{foo: '4'},
+				{bar: 'a', baz: 'bb', foo: ''},
+			],
+			'options': {'returnObject': true},
+		},
+		{
+			'name': 'lines count',
+			'csv': range.join("\n"),
+			'js': range,
+			'options': {},
+		},
+		{
+			'name': 'headerKeys usage',
+			'csv': 'foo,bar\n2,3\n\n4\n,a,bb,ccc',
+			'js': [
+				{col1: 'foo', col2: 'bar'},
+				{col1: '2', col2: '3'},
+				{col1: ''},
+				{col1: '4' },
+				{col1: '', col2: 'a'},
+			],
+			'options': {'returnObject': true, 'headerKeys': ['col1', 'col2']},
+		},
+	];
+
+	_.each(tests, function(test) {
+		t.deepEqual(
+			csvsync.parse(test.csv, test.options),
+			test.js,
+			test.name);
+	});
+
+
+	t.end();
+});
+
+
+test('import-export test', function(t) {
+	var input, output;
+	var obj;
+
+	// create an empty csv with this many rows and columns
+	var m = 500;
+	var n = 500;
+	input = '';
+
+	for (var i = 1; i <= m * n; i++)
+	{
+		input = input + (i) + ",";
+		if (i % m === 0)
+			input += '\n';
+	}
+
+	obj = csvsync.parse(input);
+	output = csvsync.stringify(obj);
+
+	t.equal(input, output, 'big empty array matches after parse ==> stringify cycle');
+
+
+	// JSON in a field test
+	var input_obj = {
+		"glossary": {
+			"title": "example glossary",
+			"nullfield": null,
+			"GlossDiv": {
+				"title": "S",
+				"GlossList": {
+					"GlossEntry": {
+						"ID": "SGML",
+						"SortAs": "SGML",
+						"GlossTerm": "Standard Generalized Markup Language",
+						"Acronym": "SGML",
+						"Abbrev": "ISO 8879:1986",
+						"GlossDef": {
+							"para": "A meta-markup language",
+							"GlossSeeAlso": ["GML", "XML"],
+						},
+						"GlossSee": "markup",
+					},
+				},
+			},
+		}
+	};
+
+	input = [
+		['header', 'json'],
+		['column data', JSON.stringify(input_obj)],
+	];
+
+	csv = csvsync.stringify(input);
+	output = csvsync.parse(csv, {'returnObject': true});
+
+	// extract the data from 'json' column and parse it
+	var output_obj = JSON.parse(output[0].json);
+
+	// compare the input object and parsed output object for complete test
+	t.deepEqual(input_obj, output_obj, 'json in field');
+
+
+	t.end();
+});

@@ -1,0 +1,25 @@
+{
+	"maxErrors": -1,
+	"preset": "idiomatic",
+	"requireSpacesInsideParentheses": null,
+	"requireSpacesInsideBrackets": false,
+	"requireCamelCaseOrUpperCaseIdentifiers": null,
+	"validateQuoteMarks": false,
+	"validateCommentPosition": false,
+	"requireSpacesInsideObjectBrackets": null,
+	"validateIndentation": "\t",
+	"maximumLineLength": {
+		"value": 100,
+		"allExcept": ["urlComments"]
+	},
+	"requireLineFeedAtFileEnd": true,
+	"disallowTrailingWhitespace": true,
+	"disallowKeywordsOnNewLine": null,
+	"requireCurlyBraces": null,
+
+	"disallowTrailingComma": false,
+	"requireTrailingComma": {
+		"ignoreSingleLine": true,
+		"ignoreSingleValue": true,
+	}
+}
