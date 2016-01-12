@@ -1,4 +1,4 @@
-# csvsync
+# csvsync [![Build Status](https://travis-ci.org/soquel/csvsync.svg?branch=master)](https://travis-ci.org/soquel/csvsync)
 
 Read and write .csv files in node *synchronously*.
 
