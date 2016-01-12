@@ -1,7 +1,7 @@
 var test = require('tape');
 
 var _ = require('lodash');
-var csvsync = require('.');
+var csvsync = require('./');
 
 
 test('csv reading and writing', function(t) {
