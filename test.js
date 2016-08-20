@@ -47,6 +47,11 @@ test('csv reading and writing', function(t) {
 			'csv': 'sum,bar\n"12,76",2\n4,5\n',
 			'js': [['sum', 'bar'], ['12,76', '2'], ['4', '5']],
 		},
+		{
+			'name': 'newline in a field',
+			'csv': '"hello\nworld",B1\nsecond line,B2\n',
+			'js': [['hello\nworld', 'B1'], ['second line', 'B2']],
+		},
 	];
 
 	_.each(tests, function(test) {
@@ -79,6 +84,16 @@ test('line endings', function(t) {
 			'name': 'mixed line-endings',
 			'csv': 'foo,bar\r\n2,3\r4,5\n',
 			'js': [['foo', 'bar'], ['2', '3'], ['4', '5']],
+		},
+		{
+			'name': 'newline in a field - windows',
+			'csv': '"hello\r\nworld",B1\r\nsecond line,B2\r\n',
+			'js': [['hello\nworld', 'B1'], ['second line', 'B2']],
+		},
+		{
+			'name': 'newline in a field - mac',
+			'csv': '"hello\rworld",B1\rsecond line,B2\r',
+			'js': [['hello\nworld', 'B1'], ['second line', 'B2']],
 		},
 	];
 
