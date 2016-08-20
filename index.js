@@ -86,7 +86,7 @@ function parse(csv, opts)
 		// so we handle those corner cases individually)
 		// use ^^QUOTE@@ as this is something we don't expect to occur in the wild
 		line = line.replace(/^"""/, '"^^QUOTE@@');
-		line = line.replace(/,"""/, ',"^^QUOTE@@');
+		line = line.replace(/,"""/g, ',"^^QUOTE@@');
 		line = line.replace(/""/g, '^^QUOTE@@');
 
 		do {
