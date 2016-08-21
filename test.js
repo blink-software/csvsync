@@ -38,9 +38,19 @@ test('csv reading and writing', function(t) {
 			'js': [['"sum"', 'bar'], ['3', '2'], ['"test" a', 'more']],
 		},
 		{
+			'name': 'more than one field starting with quote',
+			'csv': 'sum,"""spam""","""eggs"""\n3,2,1\n"""test"" a",more,even more\n',
+			'js': [['sum', '"spam"', '"eggs"'], ['3', '2', '1'], ['"test" a', 'more', 'even more']],
+		},
+		{
 			'name': 'comma in field',
 			'csv': 'sum,bar\n"12,76",2\n4,5\n',
 			'js': [['sum', 'bar'], ['12,76', '2'], ['4', '5']],
+		},
+		{
+			'name': 'newline in a field',
+			'csv': '"hello\nworld",B1\nsecond line,B2\n',
+			'js': [['hello\nworld', 'B1'], ['second line', 'B2']],
 		},
 	];
 
@@ -74,6 +84,16 @@ test('line endings', function(t) {
 			'name': 'mixed line-endings',
 			'csv': 'foo,bar\r\n2,3\r4,5\n',
 			'js': [['foo', 'bar'], ['2', '3'], ['4', '5']],
+		},
+		{
+			'name': 'newline in a field - windows',
+			'csv': '"hello\r\nworld",B1\r\nsecond line,B2\r\n',
+			'js': [['hello\nworld', 'B1'], ['second line', 'B2']],
+		},
+		{
+			'name': 'newline in a field - mac',
+			'csv': '"hello\rworld",B1\rsecond line,B2\r',
+			'js': [['hello\nworld', 'B1'], ['second line', 'B2']],
 		},
 	];
 

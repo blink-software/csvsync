@@ -51,7 +51,23 @@ function parse(csv, opts)
 	// avoid empty arrays on last row
 	csv = csv.trim();
 
-	var lines = csv.split(/\n|\r\n|\r/);
+	var prelines = csv.split(/\n|\r\n|\r/);
+
+	// join lines with odd number of quotes again (those are the ones
+	// with newlines embedded in fields)
+	var	i = 0,
+		currentLine,
+		lines = [];
+	while (i < prelines.length) {
+		currentLine = prelines[i++];
+		while (currentLine.split('"').length % 2 == 0) {
+			// ^^^ see http://stackoverflow.com/a/881111/1181665
+			// Note that we use Unix-like line endings in the parsed strings.
+			currentLine += '\n' + prelines[i++];
+		}
+		lines.push(currentLine);
+	}
+
 	var header;
 
 	if (opts.skipHeader)
@@ -86,7 +102,7 @@ function parse(csv, opts)
 		// so we handle those corner cases individually)
 		// use ^^QUOTE@@ as this is something we don't expect to occur in the wild
 		line = line.replace(/^"""/, '"^^QUOTE@@');
-		line = line.replace(/,"""/, ',"^^QUOTE@@');
+		line = line.replace(/,"""/g, ',"^^QUOTE@@');
 		line = line.replace(/""/g, '^^QUOTE@@');
 
 		do {
