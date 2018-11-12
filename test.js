@@ -56,10 +56,14 @@ test('csv reading and writing', function(t) {
 
 	_.each(tests, function(test) {
 		// test stringify
-		t.deepEqual(csvsync.stringify(test.js), test.csv, test.name + ' (stringify)');
+		t.deepEqual(
+			csvsync.stringify(test.js, test.stringifyOpts),
+			test.csv,
+			test.name + ' (stringify)'
+		);
 
 		// test parse
-		t.deepEqual(csvsync.parse(test.csv), test.js, test.name + ' (parse)');
+		t.deepEqual(csvsync.parse(test.csv, test.parseOpts), test.js, test.name + ' (parse)');
 	});
 
 
