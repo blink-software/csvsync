@@ -7,6 +7,7 @@ function stringify(data, opts)
 {
 	opts = opts || {};
 	var delimiter = opts.delimiter || ',';
+	var quoteAll = opts.quoteAll;
 
 	// iterate rows
 	return _.reduce(data, function(csv, row) {
@@ -21,7 +22,8 @@ function stringify(data, opts)
 				}
 
 				// enclose the field in " " if contains dangerous chars
-				if (field.indexOf(delimiter) > -1 ||
+				if (quoteAll ||
+					field.indexOf(delimiter) > -1 ||
 					field.indexOf('\n') > -1 ||
 					field.indexOf('"') > -1)
 				{
