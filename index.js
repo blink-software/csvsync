@@ -1,4 +1,4 @@
-var _ = require('lodash');
+var _isString = require('lodash.isstring');
 
 /**
  * convert javscript object/array into a .csv string
@@ -9,10 +9,10 @@ function stringify(data, opts)
 	var delimiter = opts.delimiter || ',';
 
 	// iterate rows
-	return _.reduce(data, function(csv, row) {
-		row = _.map(row, function(field) {
+	return data.reduce(function(csv, row) {
+		row = row.map(function(field) {
 			// console.log(field);
-			if (_.isString(field))
+			if (_isString(field))
 			{
 				// escape " in the field
 				if (field.indexOf('"') > -1)
@@ -160,7 +160,7 @@ function parse(csv, opts)
 		return row_out;
 	}
 
-	return _.map(lines, parse_line);
+	return lines.map(parse_line);
 }
 
 exports.parse = parse;
