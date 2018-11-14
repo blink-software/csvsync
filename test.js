@@ -13,6 +13,13 @@ test('csv reading and writing', function(t) {
 			'js': [['foo', 'bar'], ['2', '3'], ['4', '5']],
 		},
 		{
+			'name': 'simple',
+			'csv': 'foo;bar\n2;3\n4;5\n',
+			'js': [['foo', 'bar'], ['2', '3'], ['4', '5']],
+			'stringifyOpts': {delimiter: ';'},
+			'parseOpts': {delimiter: ';'},
+		},
+		{
 			'name': 'quotes in field',
 			'csv': '"Active ""Sum""",bar\n3,2\n4,5\n',
 			'js': [['Active "Sum"', 'bar'], ['3', '2'], ['4', '5']],
