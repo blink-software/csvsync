@@ -16,7 +16,7 @@ var data = csvsync.parse(csv);
 // 'data' now contains an array of arrays parsed from in_file.csv
 ```
 
-#### Options 
+#### Options
 
 All options are optional. Example:
 
@@ -63,7 +63,7 @@ var csv = csvsync.stringify(data);
 fs.writeFileSync('out_file.csv', csv);
 
 // out_file.csv now contains:
-// 
+//
 // this,is,row,1
 // and,"foo ""bar"" baz",is,here
 
