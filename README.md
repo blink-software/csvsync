@@ -16,7 +16,7 @@ var data = csvsync.parse(csv);
 // 'data' now contains an array of arrays parsed from in_file.csv
 ```
 
-#### Options 
+#### Options
 
 All options are optional. Example:
 
@@ -24,7 +24,8 @@ All options are optional. Example:
 var data = csvsync.parse(csv, {
     skipHeader: true,
     returnObject: true,
-    headerKeys: ['column1', 'column2']
+    headerKeys: ['column1', 'column2'],
+	delimiter: ';'
 });
 ```
 
@@ -63,12 +64,17 @@ var csv = csvsync.stringify(data);
 fs.writeFileSync('out_file.csv', csv);
 
 // out_file.csv now contains:
-// 
+//
 // this,is,row,1
 // and,"foo ""bar"" baz",is,here
 
 ```
 
+#### Options
+
+The `csvsync.stringify` function accepts an optional second parameter
+– an object with options.  Currently, two options are supported:
+`delimiter` (`','` by default) and `quoteAll` (`false` by default).
 
 # Installation
 
