@@ -35,7 +35,7 @@ function stringify(data, opts)
 		});
 
 		// make the row and glue it to the result
-		return csv += row.join(",") + "\n";
+		return csv += row.join(delimiter) + '\n';
 	}, '');
 }
 
