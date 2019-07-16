@@ -8,17 +8,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/soquel/csvsync.git"
+    "url": "git+https://github.com/blink-software/csvsync.git"
   },
   "keywords": [
     "csv"
   ],
-  "author": "Mateusz Misiorny <matt@flow2code.com>",
+  "author": "Mateusz Misiorny <mateusz@blinksoft.pl>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/soquel/csvsync/issues"
+    "url": "https://github.com/blink-software/csvsync/issues"
   },
-  "homepage": "https://github.com/soquel/csvsync#readme",
+  "homepage": "https://github.com/blink-software/csvsync#readme",
   "dependencies": {
     "lodash.isstring": "^4.0.1"
   },
