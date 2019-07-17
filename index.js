@@ -128,6 +128,10 @@ function parse(csv, opts) {
 			// bring back the quotes, unquoted already
 			field = field.replace(/\^\^QUOTE@@/g, '"');
 
+			if (opts.trim) {
+				field = field.trim();
+			}
+
 			if (opts.returnObject) {
 				// if header doesn't define that column, skip it (we can't
 				// know what key that would be)

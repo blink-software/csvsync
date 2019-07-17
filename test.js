@@ -63,6 +63,11 @@ test('csv reading and writing', function(t) {
 			js: [['quote', 'every'], ['"field"', 'cat\ndog']],
 			stringifyOpts: { quoteAll: true },
 		},
+		{
+			name: 'preserve both spaces and tabs around fields by default',
+			csv: 'foo,bar,baz\n1 \t,\t 2\t , \t3\n',
+			js: [['foo', 'bar', 'baz'], ['1 \t', '\t 2\t ', ' \t3']],
+		},
 	];
 
 	_.each(tests, function(test) {
@@ -127,6 +132,30 @@ test('using options', function(t) {
 			csv: 'foo,bar\n2,3\n4,5\n',
 			js: [['2', '3'], ['4', '5']],
 			options: { skipHeader: true },
+		},
+		{
+			name: 'trim spaces',
+			csv: 'foo,bar\n2, 3\n 4 ,5 \n',
+			js: [['foo', 'bar'], ['2', '3'], ['4', '5']],
+			options: { trim: true },
+		},
+		{
+			name: 'trim tabs',
+			csv: 'foo,bar\n2,\t3\n\t4\t,5\t\n',
+			js: [['foo', 'bar'], ['2', '3'], ['4', '5']],
+			options: { trim: true },
+		},
+		{
+			name: 'trim spaces and tabs',
+			csv: 'foo,bar\n2,\t 3\n \t4 \t,5\t\n',
+			js: [['foo', 'bar'], ['2', '3'], ['4', '5']],
+			options: { trim: true },
+		},
+		{
+			name: 'preserve spaces and tabs between field chars while trimming',
+			csv: 'foo,bar\n2, 3 \t3 \t\n4,5\n',
+			js: [['foo', 'bar'], ['2', '3 \t3'], ['4', '5']],
+			options: { trim: true },
 		},
 		{
 			name: 'empty fields',
