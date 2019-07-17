@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "lodash": "^4.17.14",
+    "prettier": "^1.18.2",
     "tap-spec": "^5.0.0",
     "tape": "^4.4.0"
   }
