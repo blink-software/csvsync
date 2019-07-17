@@ -23,7 +23,7 @@
     "lodash.isstring": "^4.0.1"
   },
   "devDependencies": {
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.14",
     "tap-spec": "^5.0.0",
     "tape": "^4.4.0"
   }
