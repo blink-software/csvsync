@@ -25,11 +25,10 @@ var data = csvsync.parse(csv, {
     skipHeader: true,
     returnObject: true,
     headerKeys: ['column1', 'column2'],
-	delimiter: ';'
+    delimiter: ';',
+    trim: true
 });
 ```
-
-
 
 * `skipHeader: Boolean`
 
@@ -46,6 +45,9 @@ Allows to provide own keys for the returned object. Useful when the header
 is human-readable or non-existent and you still want to get an object instead
 of an array. Valid only in `returnObject: true` mode.
 
+* `trim: Boolean`
+
+Trim whitespace around input values.
 
 ### Write (stringify)
 
