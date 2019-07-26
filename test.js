@@ -219,6 +219,16 @@ test('using options', function(t) {
 	t.end();
 });
 
+test('throw on odd number of double quotes', t => {
+	const tests = ['x,x,x\ny,"y,y', 'x,x,x\ny,"y,y\nz,z,z', 'x,x\ny,"y\ny"\nx,"x', 'xx",x'];
+
+	_.each(tests, function(test) {
+		t.throws(() => csvsync.parse(test), /Invalid CSV file, cannot proceed!/);
+	});
+
+	t.end();
+});
+
 test('import-export test', function(t) {
 	var input, output;
 	var obj;
