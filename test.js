@@ -219,10 +219,17 @@ test('using options', function(t) {
 	t.end();
 });
 
-test('throw on odd number of double quotes', t => {
-	const tests = ['x,x,x\ny,"y,y', 'x,x,x\ny,"y,y\nz,z,z', 'x,x\ny,"y\ny"\nx,"x', 'xx",x'];
+test('throw on odd number of quotes', t => {
+	const tests = [
+		['x,x,x\ny,"y,y', 1],
+		['x,x,x\ny,"y,y\nz,z,z', 1],
+		['x,x\ny,"y\ny"\nx,"x', 3],
+		['xx",x', 1],
+	];
 
-	_.each(tests, test => t.throws(() => csvsync.parse(test), /Invalid CSV file, cannot proceed!/));
+	_.each(tests, ([input, number]) =>
+		t.throws(() => csvsync.parse(input), new RegExp(`Odd number of quotes found: ${number}`)),
+	);
 
 	t.end();
 });

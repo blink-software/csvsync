@@ -46,16 +46,16 @@ function parse(csv, opts) {
 	// in case we receive a buffer straight from readFileSync
 	csv = csv.toString();
 
-	const doubleQuoteMatches = csv.match(/"/g);
-	const doubleQuoteCounter = doubleQuoteMatches ? doubleQuoteMatches.length : 0;
+	const quoteMatches = csv.match(/"/g);
+	const quoteCounter = quoteMatches ? quoteMatches.length : 0;
 
-	// the number of double quotes has to be even
+	// the number of quotes has to be even
 	// otherwise, given csv is invalid
-	if (doubleQuoteCounter % 2 === 1) {
+	if (quoteCounter % 2 === 1) {
 		throw new Error(
 			`Invalid CSV file, cannot proceed!
-       Odd number of double quotes found: ${doubleQuoteCounter}.
-       Ensure each double quote has been enclosed.\n`,
+       Odd number of quotes found: ${quoteCounter}.
+       Ensure each quote has been enclosed.\n`,
 		);
 	}
 
