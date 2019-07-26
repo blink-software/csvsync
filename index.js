@@ -11,7 +11,6 @@ function stringify(data, opts) {
 	// iterate rows
 	return data.reduce(function(csv, row) {
 		row = row.map(function(field) {
-			// console.log(field);
 			if (_isString(field)) {
 				// escape " in the field
 				if (field.indexOf('"') > -1) {
@@ -46,6 +45,19 @@ function parse(csv, opts) {
 
 	// in case we receive a buffer straight from readFileSync
 	csv = csv.toString();
+
+	const quoteMatches = csv.match(/"/g);
+	const quoteCounter = quoteMatches ? quoteMatches.length : 0;
+
+	// the number of quotes has to be even
+	// otherwise, given csv is invalid
+	if (quoteCounter % 2 === 1) {
+		throw new Error(
+			`Invalid CSV file, cannot proceed!
+       Odd number of quotes found: ${quoteCounter}.
+       Ensure each quote has been enclosed.\n`,
+		);
+	}
 
 	// avoid empty arrays on last row
 	csv = csv.trim();
@@ -83,7 +95,7 @@ function parse(csv, opts) {
 		}
 	}
 
-	function parse_line(line) {
+	function parse_line(line, lineCounter) {
 		var row_out = opts.returnObject ? {} : [];
 
 		var pos = 0; // start of field
@@ -99,12 +111,15 @@ function parse(csv, opts) {
 		line = line.replace(/""/g, '^^QUOTE@@');
 
 		do {
+			let hasFieldBeenEnclosedWithQuotes = false;
 			// if we've got quoted field, find the corresponding " (next one)
 			if (line.charAt(pos) === '"') {
 				pos++; // skip the opening "
 
 				// find the closing one
 				endpos = line.indexOf('"', pos + 1);
+
+				hasFieldBeenEnclosedWithQuotes = true;
 
 				field = line.substr(pos, endpos - pos);
 
@@ -125,12 +140,39 @@ function parse(csv, opts) {
 				field = line.substr(pos, endpos - pos);
 			}
 
-			// bring back the quotes, unquoted already
-			field = field.replace(/\^\^QUOTE@@/g, '"');
-
 			if (opts.trim) {
 				field = field.trim();
 			}
+
+			const unescapedQuoteMatches = field.match(/"/g);
+			const unescapedQuoteCounter = unescapedQuoteMatches ? unescapedQuoteMatches.length : 0;
+
+			// handling the following type of errors here:
+			// 'abc,x"y"z'
+			// which should look like: 'abc,"x""y""z"'
+			if (unescapedQuoteCounter > 0) {
+				const end = unescapedQuoteCounter > 1 ? 's' : '';
+				throw new Error(`Unescaped quote${end} in line ${lineCounter + 1}`);
+			}
+
+			// check if a field unenclosed with quotes
+			// contains some escaped quotes
+			// e.g 'abc,x""y""z', the valid version: 'abc,"x""y""z"'
+			if (!hasFieldBeenEnclosedWithQuotes) {
+				const escapedQuoteMatches = field.match(/\^\^QUOTE@@/g);
+				const escapedQuoteCounter = escapedQuoteMatches ? escapedQuoteMatches.length : 0;
+
+				if (escapedQuoteCounter > 0) {
+					const end = escapedQuoteCounter > 1 ? 's' : '';
+					throw new Error(
+						`Escaped quote${end} in a field unenclosed with quotes in line ${lineCounter +
+							1}`,
+					);
+				}
+			}
+
+			// bring back the quotes, unquoted already
+			field = field.replace(/\^\^QUOTE@@/g, '"');
 
 			if (opts.returnObject) {
 				// if header doesn't define that column, skip it (we can't

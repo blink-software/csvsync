@@ -219,6 +219,39 @@ test('using options', function(t) {
 	t.end();
 });
 
+test('throw on odd number of quotes', t => {
+	const tests = [
+		['x,x,x\ny,"y,y', 1],
+		['x,x,x\ny,"y,y\nz,z,z', 1],
+		['x,x\ny,"y\ny"\nx,"x', 3],
+		['xx",x', 1],
+	];
+
+	_.each(tests, ([input, number]) =>
+		t.throws(() => csvsync.parse(input), new RegExp(`Odd number of quotes found: ${number}`)),
+	);
+
+	t.end();
+});
+
+test('handle unenclosed quote errors', t => {
+	const tests = [
+		['"a""b""c",xyz\nabc,x"y"z', /Unescaped quotes in line 2/],
+		[
+			`abc,"xyz"\nabc,"x""y""z"\nabc,x""y""z\nabc,x"y"z\n`,
+			/Escaped quotes in a field unenclosed with quotes in line 3/,
+		],
+		[`abc,"xyz"\nabc,"x""y""z"\nabc,"x""y""z"\nabc,x"y"z\n`, /Unescaped quotes in line 4/],
+		[`abc,""xyz""`, /Escaped quotes in a field unenclosed with quotes in line 1/],
+		[`abc,""xyz`, /Escaped quote in a field unenclosed with quotes in line 1/],
+		[`abc:,""""xyz""""`, /Escaped quotes in a field unenclosed with quotes in line 1/],
+	];
+
+	_.each(tests, ([input, output]) => t.throws(() => csvsync.parse(input), output));
+
+	t.end();
+});
+
 test('import-export test', function(t) {
 	var input, output;
 	var obj;
