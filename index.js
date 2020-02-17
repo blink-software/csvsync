@@ -11,14 +11,13 @@ function stringify(data, opts) {
 	// iterate rows
 	return data.reduce(function(csv, row) {
 		row = row.map(function(field) {
-			// console.log(field);
 			if (_isString(field)) {
 				// escape " in the field
 				if (field.indexOf('"') > -1) {
 					field = field.replace(/"/g, '""');
 				}
 
-				// enclose the field in " " if contains dangerous chars
+				// enclose the field in " " if it contains dangerous chars
 				if (
 					quoteAll ||
 					field.indexOf(delimiter) > -1 ||
@@ -83,12 +82,30 @@ function parse(csv, opts) {
 		}
 	}
 
+	// prepare RegExp for removing field quotes
+	if (opts.removeFieldQuote) {
+		var fieldQuoteRegex = new RegExp(
+			opts.removeFieldQuote + delimiter + opts.removeFieldQuote,
+			'g',
+		);
+	}
+
 	function parse_line(line) {
 		var row_out = opts.returnObject ? {} : [];
 
 		var pos = 0; // start of field
 		var endpos = 0; // end of field
 		var idx = 0; // for keeping track of header keys
+
+		if (opts.removeFieldQuote) {
+			if (
+				line.charAt(0) === opts.removeFieldQuote &&
+				line.charAt(line.length - 1) === opts.removeFieldQuote
+			) {
+				line = line.substring(1, line.length - 1);
+				line = line.replace(fieldQuoteRegex, delimiter);
+			}
+		}
 
 		// get the quotes out of sight
 		// (the only way we get 3 quotes in a row is beginning of line or field
@@ -99,7 +116,7 @@ function parse(csv, opts) {
 		line = line.replace(/""/g, '^^QUOTE@@');
 
 		do {
-			// if we've got quoted field, find the corresponding " (next one)
+			// if we've got a quoted field, find the corresponding " (next one)
 			if (line.charAt(pos) === '"') {
 				pos++; // skip the opening "
 

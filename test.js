@@ -210,6 +210,12 @@ test('using options', function(t) {
 			],
 			options: { returnObject: true, headerKeys: ['col1', 'col2'] },
 		},
+		{
+			name: 'remove field quotes (e.g. to parse unquoted quotes)',
+			csv: '"Lorem ipsum dolor","sit "amet" consectetur","adipiscing elit sed"',
+			js: [['Lorem ipsum dolor', 'sit "amet" consectetur', 'adipiscing elit sed']],
+			options: { removeFieldQuote: '"' },
+		},
 	];
 
 	_.each(tests, function(test) {

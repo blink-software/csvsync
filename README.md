@@ -45,6 +45,16 @@ Allows to provide own keys for the returned object. Useful when the header
 is human-readable or non-existent and you still want to get an object instead
 of an array. Valid only in `returnObject: true` mode.
 
+* `removeFieldQuote: Char`
+
+If provided, strips the char from the beginning/end of each field. This is useful for e.g. working with broken .csv files which have unquoted quotes in fields. For example:
+
+```
+"Lorem ipsum dolor","sit "amet" consectetur","adipiscing elit sed"
+```
+
+In order to parse that correctly, provide `removeFieldQuote: '"'` and the doouble quotes around fields will be stripped before parsing, leaving the desired content of column B above as `sit "amet" consectetur`.
+
 * `trim: Boolean`
 
 Trim whitespace around input values.
