@@ -85,9 +85,13 @@ function parse(csv, opts) {
 	// prepare RegExp for removing field quotes
 	if (opts.removeFieldQuote) {
 		var fieldQuoteRegex = new RegExp(
-			opts.removeFieldQuote + delimiter + opts.removeFieldQuote,
+			escapeRegExp(opts.removeFieldQuote + delimiter + opts.removeFieldQuote),
 			'g',
 		);
+	}
+
+	function escapeRegExp(str) {
+		return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 	}
 
 	function parse_line(line) {
