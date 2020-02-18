@@ -216,6 +216,22 @@ test('using options', function(t) {
 			js: [['Lorem ipsum dolor', 'sit "amet" consectetur', 'adipiscing elit sed']],
 			options: { removeFieldQuote: '"' },
 		},
+		{
+			name: 'remove field quotes (regex symbol separator)',
+			csv:
+				'"invoice"|"pos"|"date"\n"000/FV/H/01/2020"|"4"|"2020-01-13"\n"001/FV/H/01/2020"|"5 "6""|"2020-01-14"',
+			js: [
+				{ invoice: '000/FV/H/01/2020', position: '4', date: '2020-01-13' },
+				{ invoice: '001/FV/H/01/2020', position: '5 "6"', date: '2020-01-14' },
+			],
+			options: {
+				skipHeader: true,
+				delimiter: '|',
+				returnObject: true,
+				headerKeys: ['invoice', 'position', 'date'],
+				removeFieldQuote: '"',
+			},
+		},
 	];
 
 	_.each(tests, function(test) {
