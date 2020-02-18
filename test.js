@@ -232,6 +232,12 @@ test('using options', function(t) {
 				removeFieldQuote: '"',
 			},
 		},
+		{
+			name: 'handle quotes in unquoted fields',
+			csv: 'abc,"def",g"hi,"jkl,mno\n"pqr,stu,vwx,yz1,234"',
+			js: [['abc', '"def"', 'g"hi', '"jkl', 'mno'], ['"pqr', 'stu', 'vwx', 'yz1', '234"']],
+			options: { unquotedFields: true },
+		},
 	];
 
 	_.each(tests, function(test) {
