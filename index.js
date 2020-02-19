@@ -50,20 +50,27 @@ function parse(csv, opts) {
 	csv = csv.trim();
 
 	var prelines = csv.split(/\n|\r\n|\r/);
+	var lines;
 
-	// join lines with odd number of quotes again (those are the ones
-	// with newlines embedded in fields)
-	var i = 0,
-		currentLine,
+	if (opts.unquotedFields) {
+		// if unquotedFields is active, there can't be fields with newlines
+		lines = prelines;
+	} else {
+		// join lines with odd number of quotes again (those are the ones
+		// with newlines embedded in fields)
+		var i = 0;
+		var currentLine;
 		lines = [];
-	while (i < prelines.length) {
-		currentLine = prelines[i++];
-		while (currentLine.split('"').length % 2 == 0) {
-			// ^^^ see http://stackoverflow.com/a/881111/1181665
-			// Note that we use Unix-like line endings in the parsed strings.
-			currentLine += '\n' + prelines[i++];
+
+		while (i < prelines.length) {
+			currentLine = prelines[i++];
+			while (currentLine.split('"').length % 2 == 0) {
+				// ^^^ see http://stackoverflow.com/a/881111/1181665
+				// Note that we use Unix-like line endings in the parsed strings.
+				currentLine += '\n' + prelines[i++];
+			}
+			lines.push(currentLine);
 		}
-		lines.push(currentLine);
 	}
 
 	var header;
@@ -121,7 +128,7 @@ function parse(csv, opts) {
 
 		do {
 			// if we've got a quoted field, find the corresponding " (next one)
-			if (line.charAt(pos) === '"') {
+			if (line.charAt(pos) === '"' && !opts.unquotedFields) {
 				pos++; // skip the opening "
 
 				// find the closing one

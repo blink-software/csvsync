@@ -55,6 +55,21 @@ If provided, strips the char from the beginning/end of each field. This is usefu
 
 In order to parse that correctly, provide `removeFieldQuote: '"'` and the doouble quotes around fields will be stripped before parsing, leaving the desired content of column B above as `sit "amet" consectetur`.
 
+* `unquotedFields: Boolean`
+
+Assume fields are not quoted and thus any quotes inside fields (even at the beginning)
+should land in the data. E.g. input .csv:
+
+```
+abc,"def",ghi
+```
+
+will yield the following output array
+
+```
+['abc', '"def"', 'ghi']
+```
+
 * `trim: Boolean`
 
 Trim whitespace around input values.
