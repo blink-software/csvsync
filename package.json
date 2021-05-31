@@ -2,7 +2,7 @@
   "name": "csvsync",
   "version": "1.3.2",
   "description": "csv reader and writer working synchronously",
-  "main": "csvsync.js",
+  "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/tape test.js | ./node_modules/.bin/tap-spec"
   },
